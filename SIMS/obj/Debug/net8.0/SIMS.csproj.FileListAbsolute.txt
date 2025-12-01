@@ -149,3 +149,4 @@ C:\Users\nguye\source\repos\SIMS\SIMS\obj\Debug\net8.0\refint\SIMS.dll
 C:\Users\nguye\source\repos\SIMS\SIMS\obj\Debug\net8.0\SIMS.pdb
 C:\Users\nguye\source\repos\SIMS\SIMS\obj\Debug\net8.0\SIMS.genruntimeconfig.cache
 C:\Users\nguye\source\repos\SIMS\SIMS\obj\Debug\net8.0\ref\SIMS.dll
+C:\Users\nguye\source\repos\SIMS\SIMS\obj\Debug\net8.0\SIMS.sourcelink.json
