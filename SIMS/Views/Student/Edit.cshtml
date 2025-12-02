@@ -1,0 +1,38 @@
+﻿@model SIMS.Models.ViewModels.Student.EditStudentViewModel
+@{
+    ViewData["Title"] = "Sửa sinh viên";
+}
+
+<div class="container mt-5">
+    <h2 class="text-warning mb-4">Sửa thông tin sinh viên</h2>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="StudentId" />
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Mã sinh viên</label>
+                <input asp-for="StudentCode" class="form-control" />
+                <span asp-validation-for="StudentCode" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Họ tên</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Chương trình đào tạo</label>
+                <select asp-for="AcademicProgramId" class="form-select" asp-items="@(new SelectList(ViewBag.Programs, "ProgramId", "ProgramName"))">
+                    <option value="">-- Chọn chương trình --</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-warning">Cập nhật</button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </form>
+</div>
