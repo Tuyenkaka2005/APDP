@@ -1,31 +1,12 @@
--- =============================================
--- SIMS - Student Information Management System
--- File: Database/Setup.sql
--- Mô tả: Tạo database sạch + đầy đủ bảng Identity cho AppUser<AppRole<int>>
--- Cách dùng: Mở SSMS → chạy toàn bộ file này 1 lần khi clone dự án
--- =============================================
 
-PRINT 'Bắt đầu tạo database SIMS_DB...'
-
--- Xóa DB cũ nếu tồn tại (để đảm bảo sạch 100%)
-IF DB_ID('SIMS_DB') IS NOT NULL
-BEGIN
-    ALTER DATABASE SIMS_DB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE SIMS_DB;
-    PRINT 'Đã xóa database cũ.'
-END
-GO
-
--- Tạo database mới
 CREATE DATABASE SIMS_DB;
 GO
-
 USE SIMS_DB;
 GO
 
-PRINT 'Đang tạo các bảng ASP.NET Core Identity (chuẩn cho AppUser + AppRole<int>)...'
+PRINT 'Tạo bảng ASP.NET Core Identity (cho AppUser + AppRole<int>)...'
 
--- 1. AspNetUsers (đầy đủ cột cho Identity + FullName)
+-- AspNetUsers (Identity + FullName)
 CREATE TABLE AspNetUsers (
     Id                   INT IDENTITY(1,1) PRIMARY KEY,
     UserName             NVARCHAR(256) NULL,
@@ -46,7 +27,7 @@ CREATE TABLE AspNetUsers (
     CreatedAt            DATETIME2 DEFAULT GETDATE()
 );
 
--- 2. AspNetRoles
+-- AspNetRoles
 CREATE TABLE AspNetRoles (
     Id                   INT IDENTITY(1,1) PRIMARY KEY,
     Name                 NVARCHAR(256) NULL,
@@ -54,97 +35,149 @@ CREATE TABLE AspNetRoles (
     ConcurrencyStamp     NVARCHAR(MAX) NULL
 );
 
--- 3. Các bảng Identity còn lại
-CREATE TABLE AspNetUserClaims (
-    Id         INT IDENTITY(1,1) PRIMARY KEY,
-    UserId     INT NOT NULL,
-    ClaimType  NVARCHAR(MAX) NULL,
-    ClaimValue NVARCHAR(MAX) NULL,
-    CONSTRAINT FK_AspNetUserClaims_AspNetUsers FOREIGN KEY (UserId) 
-        REFERENCES AspNetUsers(Id) ON DELETE CASCADE
-);
-
-CREATE TABLE AspNetUserLogins (
-    LoginProvider       NVARCHAR(128) NOT NULL,
-    ProviderKey         NVARCHAR(128) NOT NULL,
-    ProviderDisplayName NVARCHAR(MAX) NULL,
-    UserId              INT NOT NULL,
-    PRIMARY KEY (LoginProvider, ProviderKey),
-    CONSTRAINT FK_AspNetUserLogins_AspNetUsers FOREIGN KEY (UserId) 
-        REFERENCES AspNetUsers(Id) ON DELETE CASCADE
-);
-
-CREATE TABLE AspNetUserRoles (
-    UserId INT NOT NULL,
-    RoleId INT NOT NULL,
+-- Các bảng Identity khác
+CREATE TABLE AspNetUserClaims (Id INT IDENTITY(1,1) PRIMARY KEY, UserId INT NOT NULL, ClaimType NVARCHAR(MAX), ClaimValue NVARCHAR(MAX),
+    FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id) ON DELETE CASCADE);
+CREATE TABLE AspNetUserLogins (LoginProvider NVARCHAR(128) NOT NULL, ProviderKey NVARCHAR(128) NOT NULL, ProviderDisplayName NVARCHAR(MAX), UserId INT NOT NULL,
+    PRIMARY KEY (LoginProvider, ProviderKey), FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id) ON DELETE CASCADE);
+CREATE TABLE AspNetUserRoles (UserId INT NOT NULL, RoleId INT NOT NULL,
     PRIMARY KEY (UserId, RoleId),
-    CONSTRAINT FK_AspNetUserRoles_Users FOREIGN KEY (UserId) 
-        REFERENCES AspNetUsers(Id) ON DELETE CASCADE,
-    CONSTRAINT FK_AspNetUserRoles_Roles FOREIGN KEY (RoleId) 
-        REFERENCES AspNetRoles(Id) ON DELETE CASCADE
-);
+    FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id) ON DELETE CASCADE,
+    FOREIGN KEY (RoleId) REFERENCES AspNetRoles(Id) ON DELETE CASCADE);
+CREATE TABLE AspNetRoleClaims (Id INT IDENTITY(1,1) PRIMARY KEY, RoleId INT NOT NULL, ClaimType NVARCHAR(MAX), ClaimValue NVARCHAR(MAX),
+    FOREIGN KEY (RoleId) REFERENCES AspNetRoles(Id) ON DELETE CASCADE);
+CREATE TABLE AspNetUserTokens (UserId INT NOT NULL, LoginProvider NVARCHAR(128) NOT NULL, Name NVARCHAR(128) NOT NULL, Value NVARCHAR(MAX),
+    PRIMARY KEY (UserId, LoginProvider, Name), FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id) ON DELETE CASCADE);
 
-CREATE TABLE AspNetRoleClaims (
-    Id       INT IDENTITY(1,1) PRIMARY KEY,
-    RoleId   INT NOT NULL,
-    ClaimType NVARCHAR(MAX) NULL,
-    ClaimValue NVARCHAR(MAX) NULL,
-    CONSTRAINT FK_AspNetRoleClaims_AspNetRoles FOREIGN KEY (RoleId) 
-        REFERENCES AspNetRoles(Id) ON DELETE CASCADE
-);
-
-CREATE TABLE AspNetUserTokens (
-    UserId        INT NOT NULL,
-    LoginProvider NVARCHAR(128) NOT NULL,
-    Name          NVARCHAR(128) NOT NULL,
-    Value         NVARCHAR(MAX) NULL,
-    PRIMARY KEY (UserId, LoginProvider, Name),
-    CONSTRAINT FK_AspNetUserTokens_AspNetUsers FOREIGN KEY (UserId) 
-        REFERENCES AspNetUsers(Id) ON DELETE CASCADE
-);
-
--- Index bắt buộc
-CREATE UNIQUE INDEX IX_AspNetUsers_NormalizedUserName 
-ON AspNetUsers(NormalizedUserName) WHERE NormalizedUserName IS NOT NULL;
-
-CREATE UNIQUE INDEX IX_AspNetUsers_NormalizedEmail 
-ON AspNetUsers(NormalizedEmail) WHERE NormalizedEmail IS NOT NULL;
-
-CREATE UNIQUE INDEX IX_AspNetRoles_NormalizedName 
-ON AspNetRoles(NormalizedName) WHERE NormalizedName IS NOT NULL;
+-- Index cho Identity
+CREATE UNIQUE INDEX IX_AspNetUsers_NormalizedUserName ON AspNetUsers(NormalizedUserName) WHERE NormalizedUserName IS NOT NULL;
+CREATE UNIQUE INDEX IX_AspNetUsers_NormalizedEmail ON AspNetUsers(NormalizedEmail) WHERE NormalizedEmail IS NOT NULL;
+CREATE UNIQUE INDEX IX_AspNetRoles_NormalizedName ON AspNetRoles(NormalizedName) WHERE NormalizedName IS NOT NULL;
 
 -- Tạo 3 Role cơ bản
 INSERT INTO AspNetRoles (Name, NormalizedName) VALUES 
-('Admin',   'ADMIN'),
-('Faculty', 'FACULTY'),
-('Student', 'STUDENT');
+('Admin', 'ADMIN'), ('Faculty', 'FACULTY'), ('Student', 'STUDENT');
 
--- Tạo tài khoản Admin mẫu (mật khẩu: Admin@123)
--- Password hash được tạo bằng ASP.NET Identity → sẽ thêm bằng code sau
-PRINT 'Đã tạo xong các bảng Identity!'
+PRINT 'Tạo bảng đồ án SIMS...'
 
--- Tạo các bảng đồ án (sẽ do Migration tạo, nhưng để sẵn tên bảng tránh lỗi)
--- Nếu bạn dùng Migration thì bỏ qua phần này
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Departments')
+-- Departments
 CREATE TABLE Departments (
     DepartmentId   INT IDENTITY(1,1) PRIMARY KEY,
-    DepartmentCode NVARCHAR(20) NOT NULL,
+    DepartmentCode NVARCHAR(20) NOT NULL UNIQUE,
     DepartmentName NVARCHAR(100) NOT NULL
 );
--- ĐÁNH DẤU RẰNG MIGRATION IDENTITY ĐÃ ĐƯỢC ÁP DỤNG (để EF Core không cố tạo lại)
-INSERT INTO __EFMigrationsHistory (MigrationId, ProductVersion)
-VALUES ('00000000000000_CreateIdentitySchema', '8.0.0');
 
-PRINT '====================================================================='
-PRINT 'HOÀN TẤT! ĐÃ ĐÁNH DẤU MIGRATION IDENTITY ĐÃ CHẠY'
-PRINT 'BÂY GIỜ CHỈ CẦN CHẠY LỆNH SAU TRONG TERMINAL:'
-PRINT 'dotnet ef database update'
-PRINT '→ Tất cả bảng Student, Course, Enrollment... sẽ được tạo tự động!'
-PRINT '====================================================================='
+-- AcademicPrograms
+CREATE TABLE AcademicPrograms (
+    AcademicProgramId INT IDENTITY(1,1) PRIMARY KEY,
+    ProgramCode       NVARCHAR(20) NOT NULL UNIQUE,
+    ProgramName       NVARCHAR(100) NOT NULL,
+    DegreeType        NVARCHAR(50) NOT NULL DEFAULT 'Bachelor',
+    DurationYears     INT NOT NULL DEFAULT 4,
+    RequiredCredits   INT NOT NULL DEFAULT 140,
+    DepartmentId      INT NOT NULL,
+    FOREIGN KEY (DepartmentId) REFERENCES Departments(DepartmentId)
+);
 
-PRINT '====================================================================='
-PRINT 'HOÀN TẤT! Database SIMS_DB đã sẵn sàng.'
-PRINT 'Bây giờ chạy lệnh sau trong terminal dự án:'
-PRINT 'dotnet ef database update'
-PRINT '→ EF Core sẽ tạo các bảng còn lại (Students, Courses, CourseSections...)'
-PRINT '====================================================================='
+-- Courses
+CREATE TABLE Courses (
+    CourseId       INT IDENTITY(1,1) PRIMARY KEY,
+    CourseCode     NVARCHAR(20) NOT NULL UNIQUE,
+    CourseName     NVARCHAR(100) NOT NULL,
+    Credits        INT NOT NULL DEFAULT 3,
+    Description    NVARCHAR(500) NULL,
+    DepartmentId   INT NOT NULL,
+    FOREIGN KEY (DepartmentId) REFERENCES Departments(DepartmentId)
+);
+
+-- CourseSections
+CREATE TABLE CourseSections (
+    SectionId      INT IDENTITY(1,1) PRIMARY KEY,
+    CourseId       INT NOT NULL,
+    FacultyId      INT NULL,
+    Semester       NVARCHAR(10) NOT NULL DEFAULT 'HK1',
+    AcademicYear   INT NOT NULL DEFAULT YEAR(GETDATE()),
+    Capacity       INT NOT NULL DEFAULT 60,
+    EnrolledCount  INT NOT NULL DEFAULT 0,
+    Room           NVARCHAR(20) NULL,
+    Schedule       NVARCHAR(100) NULL,
+    FOREIGN KEY (CourseId) REFERENCES Courses(CourseId),
+    FOREIGN KEY (FacultyId) REFERENCES AspNetUsers(Id)
+);
+
+-- Students
+CREATE TABLE Students (
+    StudentId         INT IDENTITY(1,1) PRIMARY KEY,
+    UserId            INT NOT NULL UNIQUE,
+    StudentCode       NVARCHAR(20) NOT NULL UNIQUE,
+    FullName          NVARCHAR(100) NOT NULL,
+    AdmissionDate     DATE DEFAULT GETDATE(),
+    AcademicProgramId INT NULL,
+    GPA               DECIMAL(3,2) DEFAULT 0,
+    FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id) ON DELETE CASCADE,
+    FOREIGN KEY (AcademicProgramId) REFERENCES AcademicPrograms(AcademicProgramId)
+);
+
+-- Enrollments
+CREATE TABLE Enrollments (
+    EnrollmentId   INT IDENTITY(1,1) PRIMARY KEY,
+    StudentId      INT NOT NULL,
+    SectionId      INT NOT NULL,
+    EnrollDate     DATETIME2 DEFAULT GETDATE(),
+    Status         NVARCHAR(20) DEFAULT 'Enrolled',
+    MidtermScore   DECIMAL(5,2) NULL,
+    FinalScore     DECIMAL(5,2) NULL,
+    TotalScore     DECIMAL(5,2) NULL,
+    LetterGrade    NVARCHAR(5) NULL,
+    FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
+    FOREIGN KEY (SectionId) REFERENCES CourseSections(SectionId),
+    CONSTRAINT UQ_Student_Section UNIQUE (StudentId, SectionId)
+);
+
+-- Grades
+CREATE TABLE Grades (
+    GradeId        INT IDENTITY(1,1) PRIMARY KEY,
+    EnrollmentId   INT NOT NULL,
+    FinalGrade     DECIMAL(5,2) NULL,
+    LetterGrade    NVARCHAR(5) NULL,
+    GradeDate      DATETIME2 DEFAULT GETDATE(),
+    GradedByFacultyId INT NULL,
+    FOREIGN KEY (EnrollmentId) REFERENCES Enrollments(EnrollmentId) ON DELETE CASCADE,
+    FOREIGN KEY (GradedByFacultyId) REFERENCES AspNetUsers(Id)
+);
+
+-- Faculty (liên kết 1-1 với AspNetUsers)
+CREATE TABLE Faculty (
+    FacultyId      INT IDENTITY(1,1) PRIMARY KEY,
+    UserId         INT NOT NULL UNIQUE,
+    EmployeeCode   NVARCHAR(20) NOT NULL UNIQUE,
+    FullName       NVARCHAR(100) NOT NULL,
+    DepartmentId   INT NULL,
+    FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id) ON DELETE CASCADE,
+    FOREIGN KEY (DepartmentId) REFERENCES Departments(DepartmentId)
+);
+
+-- Admins (liên kết 1-1 với AspNetUsers)
+CREATE TABLE Admins (
+    AdminId        INT IDENTITY(1,1) PRIMARY KEY,
+    UserId         INT NOT NULL UNIQUE,
+    EmployeeCode   NVARCHAR(20) NOT NULL UNIQUE,
+    FullName       NVARCHAR(100) NOT NULL,
+    Position       NVARCHAR(50) DEFAULT 'Administrator',
+    FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id) ON DELETE CASCADE
+);
+
+-- Tạo bảng __EFMigrationsHistory để tránh lỗi migration
+CREATE TABLE __EFMigrationsHistory (
+    MigrationId    NVARCHAR(150) NOT NULL PRIMARY KEY,
+    ProductVersion NVARCHAR(32) NOT NULL
+);
+
+-- Đánh dấu migration Identity + FullSIMS đã chạy
+INSERT INTO __EFMigrationsHistory (MigrationId, ProductVersion) VALUES
+('00000000000000_CreateIdentitySchema', '8.0.15'),
+('20251201151306_FullSIMS', '8.0.15');
+
+PRINT 'HOÀN TẤT 100%! Database SIMS_DB đã có đầy đủ bảng!'
+PRINT 'Các thành viên chỉ cần chạy file này 1 lần là có DB giống bạn 100%!'
+PRINT 'Chạy web → đăng ký tài khoản → vào /Admin để gán role!'
