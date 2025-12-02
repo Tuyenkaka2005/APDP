@@ -131,6 +131,16 @@ CREATE TABLE Departments (
     DepartmentCode NVARCHAR(20) NOT NULL,
     DepartmentName NVARCHAR(100) NOT NULL
 );
+-- ĐÁNH DẤU RẰNG MIGRATION IDENTITY ĐÃ ĐƯỢC ÁP DỤNG (để EF Core không cố tạo lại)
+INSERT INTO __EFMigrationsHistory (MigrationId, ProductVersion)
+VALUES ('00000000000000_CreateIdentitySchema', '8.0.0');
+
+PRINT '====================================================================='
+PRINT 'HOÀN TẤT! ĐÃ ĐÁNH DẤU MIGRATION IDENTITY ĐÃ CHẠY'
+PRINT 'BÂY GIỜ CHỈ CẦN CHẠY LỆNH SAU TRONG TERMINAL:'
+PRINT 'dotnet ef database update'
+PRINT '→ Tất cả bảng Student, Course, Enrollment... sẽ được tạo tự động!'
+PRINT '====================================================================='
 
 PRINT '====================================================================='
 PRINT 'HOÀN TẤT! Database SIMS_DB đã sẵn sàng.'
