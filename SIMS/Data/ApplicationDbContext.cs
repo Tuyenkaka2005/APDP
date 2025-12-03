@@ -22,7 +22,7 @@ namespace SIMS.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Cấu hình quan hệ sau (mình sẽ gửi tiếp)
+            
         }
     }
 }
