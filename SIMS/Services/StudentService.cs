@@ -58,25 +58,45 @@ namespace SIMS.Services
                 .FirstOrDefaultAsync(s => s.StudentId == id);
         }
 
-        public async Task CreateAsync(Student student, string password) // Modified signature
+        public async Task CreateAsync(Student student, string email, string password)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var result = await _userManager.CreateAsync(student.User, password); // Use student.User
+                // KIỂM TRA USERNAME ĐÃ TỒN TẠI CHƯA
+                var existingUser = await _userManager.FindByNameAsync(student.StudentCode);
+                if (existingUser != null)
+                {
+                    throw new Exception($"Mã sinh viên {student.StudentCode} đã được sử dụng!");
+                }
+
+                var user = new AppUser
+                {
+                    UserName = student.StudentCode,
+                    Email = email,
+                    FullName = student.FullName,
+                    EmailConfirmed = true
+                };
+
+                var result = await _userManager.CreateAsync(user, password);
                 if (!result.Succeeded)
                     throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
 
-                await _userManager.AddToRoleAsync(student.User, "Student"); // Use student.User
+                await _userManager.AddToRoleAsync(user, "Student");
 
-                student.UserId = student.User.Id; // Use student.User.Id
+                student.UserId = user.Id;
+                student.User = user;
+
                 _context.Students.Add(student);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
+
+                _logger.LogInformation("Tạo sinh viên {Code} thành công!", student.StudentCode);
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+                _logger.LogError(ex, "Lỗi khi tạo sinh viên {Code}", student.StudentCode);
                 throw;
             }
         }

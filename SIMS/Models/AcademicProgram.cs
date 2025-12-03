@@ -5,7 +5,8 @@ namespace SIMS.Models
     public class AcademicProgram
     {
         [Key]
-        public int ProgramId { get; set; }
+        public int AcademicProgramId { get; set; }
+       
 
         [Required]
         public string ProgramCode { get; set; } = null!;

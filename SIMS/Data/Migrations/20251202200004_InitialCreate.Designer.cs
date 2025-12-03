@@ -9,11 +9,11 @@ using SIMS.Data;
 
 #nullable disable
 
-namespace SIMS.Migrations
+namespace SIMS.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251202182132_AddEnrollmentsToStudentAgain")]
-    partial class AddEnrollmentsToStudentAgain
+    [Migration("20251202200004_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -161,7 +161,7 @@ namespace SIMS.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("AcademicPrograms");
+                    b.ToTable("AcademicProgram");
                 });
 
             modelBuilder.Entity("SIMS.Models.Admin", b =>
@@ -413,15 +413,13 @@ namespace SIMS.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("FinalScore")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("LetterGrade")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("MidtermScore")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SectionId")
                         .HasColumnType("int");
@@ -434,8 +432,7 @@ namespace SIMS.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("TotalScore")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("EnrollmentId");
 
@@ -496,8 +493,7 @@ namespace SIMS.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("FinalGrade")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("GradeDate")
                         .HasColumnType("datetime2");
@@ -526,7 +522,7 @@ namespace SIMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudentId"));
 
-                    b.Property<int?>("AcademicProgramId")
+                    b.Property<int>("AcademicProgramId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("AdmissionDate")
@@ -537,8 +533,7 @@ namespace SIMS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("GPA")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("StudentCode")
                         .IsRequired()
@@ -675,7 +670,7 @@ namespace SIMS.Migrations
                     b.HasOne("SIMS.Models.Student", "Student")
                         .WithMany("Enrollments")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Section");
@@ -721,7 +716,9 @@ namespace SIMS.Migrations
                 {
                     b.HasOne("SIMS.Models.AcademicProgram", "AcademicProgram")
                         .WithMany("Students")
-                        .HasForeignKey("AcademicProgramId");
+                        .HasForeignKey("AcademicProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SIMS.Models.AppUser", "User")
                         .WithOne("Student")

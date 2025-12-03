@@ -519,7 +519,7 @@ namespace SIMS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudentId"));
 
-                    b.Property<int?>("AcademicProgramProgramId")
+                    b.Property<int>("AcademicProgramId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("AdmissionDate")
@@ -532,9 +532,6 @@ namespace SIMS.Data.Migrations
                     b.Property<decimal>("GPA")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ProgramId")
-                        .HasColumnType("int");
-
                     b.Property<string>("StudentCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -544,7 +541,7 @@ namespace SIMS.Data.Migrations
 
                     b.HasKey("StudentId");
 
-                    b.HasIndex("AcademicProgramProgramId");
+                    b.HasIndex("AcademicProgramId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -668,7 +665,7 @@ namespace SIMS.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("SIMS.Models.Student", "Student")
-                        .WithMany()
+                        .WithMany("Enrollments")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -714,15 +711,19 @@ namespace SIMS.Data.Migrations
 
             modelBuilder.Entity("SIMS.Models.Student", b =>
                 {
-                    b.HasOne("SIMS.Models.AcademicProgram", null)
+                    b.HasOne("SIMS.Models.AcademicProgram", "AcademicProgram")
                         .WithMany("Students")
-                        .HasForeignKey("AcademicProgramProgramId");
+                        .HasForeignKey("AcademicProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SIMS.Models.AppUser", "User")
                         .WithOne("Student")
                         .HasForeignKey("SIMS.Models.Student", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AcademicProgram");
 
                     b.Navigation("User");
                 });
@@ -765,6 +766,11 @@ namespace SIMS.Data.Migrations
             modelBuilder.Entity("SIMS.Models.Faculty", b =>
                 {
                     b.Navigation("TeachingSections");
+                });
+
+            modelBuilder.Entity("SIMS.Models.Student", b =>
+                {
+                    b.Navigation("Enrollments");
                 });
 #pragma warning restore 612, 618
         }
