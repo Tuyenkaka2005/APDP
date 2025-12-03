@@ -1,64 +1,94 @@
 @model SIMS.Models.ViewModels.Student.CreateStudentViewModel
-
 @{
-    ViewData["Title"] = "Create Student";
+    ViewData["Title"] = "Thêm sinh viên m?i";
 }
 
-<h1>Create Student</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i> Thêm sinh viên m?i
+                    </h3>
+                </div>
+                <div class="card-body p-5">
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="StudentCode" class="control-label"></label>
-                <input asp-for="StudentCode" class="form-control" />
-                <span asp-validation-for="StudentCode" class="text-danger"></span>
+                    <!-- L?i chung -->
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
+
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <!-- Mã sinh viên -->
+                        <div class="mb-4">
+                            <label asp-for="StudentCode" class="form-label fw-bold">Mã sinh viên</label>
+                            <input asp-for="StudentCode" class="form-control form-control-lg" placeholder="VD: BH01679" />
+                            <span asp-validation-for="StudentCode" class="text-danger"></span>
+                            <small class="form-text text-muted">Mã sinh viên không ???c trùng</small>
+                        </div>
+
+                        <!-- H? tên -->
+                        <div class="mb-4">
+                            <label asp-for="FullName" class="form-label fw-bold">H? và tên</label>
+                            <input asp-for="FullName" class="form-control form-control-lg" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-4">
+                            <label asp-for="Email" class="form-label fw-bold">Email</label>
+                            <input asp-for="Email" class="form-control form-control-lg" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <!-- M?t kh?u -->
+                        <div class="mb-4">
+                            <label asp-for="Password" class="form-label fw-bold">M?t kh?u</label>
+                            <input asp-for="Password" type="password" class="form-control form-control-lg" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <!-- Ch??ng trình ?ào t?o -->
+                        <div class="mb-4">
+                            <label asp-for="AcademicProgramId" class="form-label fw-bold">Ch??ng trình ?ào t?o</label>
+                            <select asp-for="AcademicProgramId" class="form-select form-select-lg"
+                                    asp-items="@(new SelectList(ViewBag.Programs ?? new List<AcademicProgram>(), "AcademicProgramId", "ProgramName"))">
+                                <option value="">-- Ch?n ch??ng trình --</option>
+                            </select>
+                            <span asp-validation-for="AcademicProgramId" class="text-danger"></span>
+                        </div>
+
+                        <!-- GPA & Phone (tùy ch?n) -->
+                        <div class="mb-4">
+                            <label asp-for="GPA" class="form-label fw-bold">GPA ban ??u</label>
+                            <input asp-for="GPA" class="form-control form-control-lg" type="number" step="0.01" min="0" max="4" />
+                            <span asp-validation-for="GPA" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="PhoneNumber" class="form-label fw-bold">S? ?i?n tho?i</label>
+                            <input asp-for="PhoneNumber" class="form-control form-control-lg" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid d-md-flex justify-content-md-end gap-3">
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-arrow-left"></i> Quay l?i
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-5">
+                                <i class="fas fa-save"></i> Thêm sinh viên
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" type="password" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AcademicProgramId" class="control-label"></label>
-                <select asp-for="AcademicProgramId" class="form-control" asp-items="@(new SelectList(ViewBag.Programs, "ProgramId", "ProgramName"))">
-                    <option value="">-- Select Program --</option>
-                </select>
-                <span asp-validation-for="AcademicProgramId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GPA" class="control-label"></label>
-                <input asp-for="GPA" class="form-control" type="number" step="0.01" />
-                <span asp-validation-for="GPA" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

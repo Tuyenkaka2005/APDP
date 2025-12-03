@@ -25,7 +25,7 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label">Chương trình đào tạo</label>
-                <select asp-for="AcademicProgramId" class="form-select" asp-items="@(new SelectList(ViewBag.Programs, "ProgramId", "ProgramName"))">
+                <select asp-for="AcademicProgramId" class="form-select" asp-items="@(new SelectList(ViewBag.Programs, "AcademicProgramId", "ProgramName"))">
                     <option value="">-- Chọn chương trình --</option>
                 </select>
             </div>

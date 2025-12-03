@@ -27,7 +27,7 @@
                 <option value="">-- Tất cả chương trình --</option>
                 @foreach (var p in ViewBag.Programs)
                 {
-                    <option value="@p.ProgramId" selected="@(p.ProgramId == ViewBag.ProgramId)">@p.ProgramCode - @p.ProgramName</option>
+                    <option value="@p.AcademicProgramId" selected="@(p.AcademicProgramId == ViewBag.AcademicProgramId)">@p.ProgramCode - @p.ProgramName</option>
                 }
             </select>
         </div>

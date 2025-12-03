@@ -13,7 +13,7 @@ namespace SIMS.Data
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Department> Departments { get; set; }
-        public DbSet<AcademicProgram> AcademicProgram { get; set; } = null!;
+        public DbSet<AcademicProgram> AcademicPrograms { get; set; } = null!;
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseSection> CourseSections { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
@@ -22,7 +22,7 @@ namespace SIMS.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Cấu hình quan hệ sau (mình sẽ gửi tiếp)
+           
         }
     }
 }

@@ -26,56 +26,62 @@ namespace SIMS.Controllers
         public async Task<IActionResult> Index(string? search, int? programId)
         {
             var students = await _studentService.GetAllAsync(search, programId);
+
+            // FIX LỖI NULL – BẮT BUỘC PHẢI CÓ!!!
+            var programs = await _programService.GetAllAsync();
+            ViewBag.Programs = programs ?? new List<AcademicProgram>(); // Nếu null thì cho danh sách rỗng
+
             ViewBag.Search = search;
-            ViewBag.ProgramId = programId;
-            ViewBag.Programs = await _programService.GetAllAsync();
+            ViewBag.AcademicProgramId = programId;
+
             return View(students);
         }
 
         // GET: /StudentAdmin/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.Programs = await _programService.GetAllAsync();
+            // FIX LỖI NULL – BẮT BUỘC PHẢI CÓ!!!
+            var programs = await _programService.GetAllAsync();
+            ViewBag.Programs = programs ?? new List<AcademicProgram>();
+
             return View(new CreateStudentViewModel());
         }
 
-        // POST: /StudentAdmin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateStudentViewModel model)
         {
+            // KIỂM TRA TRÙNG MÃ SINH VIÊN
             if (await _studentService.StudentCodeExistsAsync(model.StudentCode))
-                ModelState.AddModelError("StudentCode", "Mã sinh viên đã tồn tại!");
-
-            if (await _userManager.FindByEmailAsync(model.Email) != null)
-                ModelState.AddModelError("Email", "Email đã được sử dụng!");
+            {
+                ModelState.AddModelError("StudentCode", $"Mã sinh viên {model.StudentCode} đã được sử dụng!");
+            }
 
             if (ModelState.IsValid)
             {
-                var user = new AppUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    FullName = model.FullName,
-                    PhoneNumber = model.PhoneNumber
-                };
-
                 var student = new Student
                 {
                     StudentCode = model.StudentCode,
                     FullName = model.FullName,
                     AdmissionDate = DateTime.Today,
-                    AcademicProgramId = model.AcademicProgramId, // ĐÃ SỬA: AcademicProgramId (không phải ProgramId)
-                    GPA = model.GPA,
-                    User = user
+                    AcademicProgramId = model.AcademicProgramId,
+                    GPA = model.GPA
                 };
 
-                await _studentService.CreateAsync(student, model.Password);
-                TempData["Success"] = "Thêm sinh viên thành công!";
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _studentService.CreateAsync(student, model.Email, model.Password);
+                    TempData["Success"] = "Thêm sinh viên thành công!";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message); // Hiển thị lỗi chung nếu có
+                }
             }
 
-            ViewBag.Programs = await _programService.GetAllAsync();
+            // Nếu có lỗi → load lại danh sách chương trình
+            ViewBag.Programs = await _programService.GetAllAsync() ?? new List<AcademicProgram>();
             return View(model);
         }
 
@@ -91,12 +97,10 @@ namespace SIMS.Controllers
                 StudentCode = student.StudentCode,
                 FullName = student.FullName,
                 Email = student.User?.Email ?? "",
-                AcademicProgramId = student.AcademicProgramId,
-                GPA = student.GPA,
-                PhoneNumber = student.User?.PhoneNumber
+                AcademicProgramId = student.AcademicProgramId
             };
 
-            ViewBag.Programs = await _programService.GetAllAsync();
+            ViewBag.Programs = await _programService.GetAllAsync() ?? new List<AcademicProgram>();
             return View(model);
         }
 
@@ -147,6 +151,12 @@ namespace SIMS.Controllers
             await _studentService.DeleteAsync(id);
             TempData["Success"] = "Xóa sinh viên thành công!";
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task LoadProgramsAsync()
+        {
+            var programs = await _programService.GetAllAsync();
+            ViewBag.Programs = programs ?? new List<AcademicProgram>();
         }
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SIMS.Data;
 using SIMS.Models; // thêm dòng này
+using SIMS.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,9 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IAcademicProgramService, AcademicProgramService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(); // cần cho Identity
@@ -53,6 +57,32 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+// TỰ ĐỘNG TẠO ADMIN KHI CHẠY LẦN ĐẦU
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
+    string adminEmail = "admin@sims.com";
+    string adminPassword = "Admin@123";
+
+    if (await userManager.FindByEmailAsync(adminEmail) == null)
+    {
+        var adminUser = new AppUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FullName = "Quản trị viên",
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+}
 
 app.Run();

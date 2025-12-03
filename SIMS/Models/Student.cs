@@ -18,12 +18,14 @@ namespace SIMS.Models
 
         public DateTime AdmissionDate { get; set; } = DateTime.Now;
 
-        public int? ProgramId { get; set; }
+        public int AcademicProgramId { get; set; }
 
         public decimal GPA { get; set; } = 0m;
 
-        // Navigation
+        // Navigation properties
         [ForeignKey("UserId")]
         public virtual AppUser User { get; set; } = null!;
+        public virtual AcademicProgram AcademicProgram { get; set; } = null!;
+        public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }
