@@ -7,10 +7,7 @@ using Xunit;
 
 namespace SIMS.Tests
 {
-    /// <summary>
-    /// Automation Test Cases for SIMS Application
-    /// Test Results will be displayed in a table format after running tests
-    /// </summary>
+
     public class SIMSTests : IDisposable
     {
         private readonly SIMSContext _context;

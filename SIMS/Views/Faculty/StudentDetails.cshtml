@@ -1,0 +1,237 @@
+﻿@model SIMS.Models.Entities.Student
+@{
+    ViewData["Title"] = "Student Information";
+    var myEnrollments = ViewBag.MyEnrollments as List<SIMS.Models.Entities.Enrollment>;
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="fas fa-user-graduate text-primary"></i> Student Information
+            </h2>
+            <p class="text-muted">Details and academic information</p>
+        </div>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Personal Information -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header profile-card-header text-center py-4">
+                    <div class="position-relative">
+                        <i class="fas fa-user-circle fa-5x text-primary mb-3 avatar-icon"></i>
+                        <h4 class="mb-1 fw-bold">@Model.User?.FullName</h4>
+                        <span class="badge bg-light text-dark border shadow-sm">@Model.StudentCode</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h6 class="text-primary fw-bold mb-4 border-bottom pb-2">
+                        <i class="fas fa-info-circle"></i> Basic Information
+                    </h6>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">Email</div>
+                        <div class="col-8 info-value">
+                            <a href="mailto:@Model.User?.Email" class="text-decoration-none fw-bold">
+                                @Model.User?.Email
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">Phone</div>
+                        <div class="col-8 info-value">@(Model.User?.Phone ?? "Not updated")</div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">Date of Birth</div>
+                        <div class="col-8 info-value">@(Model.User?.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Not updated")</div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">Address</div>
+                        <div class="col-8 info-value">@(Model.User?.Address ?? "Not updated")</div>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-graduation-cap"></i> Academic Information
+                    </h6>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">Program</div>
+                        <div class="col-8 fw-bold text-primary">@Model.AcademicPrograms?.ProgramName</div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">Department</div>
+                        <div class="col-8 info-value">@Model.Department?.DepartmentName</div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">Admission Date</div>
+                        <div class="col-8 info-value">@(Model.AdmissionDate?.ToString("dd/MM/yyyy") ?? "Not updated")</div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">Admission Type</div>
+                        <div class="col-8 info-value">@(Model.AdmissionType ?? "Not updated")</div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">GPA</div>
+                        <div class="col-8">
+                            <span class="badge bg-success rounded-pill px-3">@Model.GPA.ToString("F2")</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4 info-label">Total Credits</div>
+                        <div class="col-8 info-value">@Model.TotalCredits credits</div>
+                    </div>
+
+                    <div class="row mb-0 align-items-center">
+                        <div class="col-4 info-label">Status</div>
+                        <div class="col-8">
+                            @if (Model.Status == "Active")
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else if (Model.Status == "Graduated")
+                            {
+                                <span class="badge bg-info">Graduated</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">@Model.Status</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        <!-- Course Enrollments -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header py-3 bg-white">
+                    <h5 class="mb-0 fw-bold text-success">
+                        <i class="fas fa-list me-2"></i> My Courses Enrolled by This Student
+                    </h5>
+                </div>
+                @if (myEnrollments != null && myEnrollments.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-nowrap">
+                            <thead class="table-detail-header">
+                                <tr>
+                                    <th class="ps-4">Course Code</th>
+                                    <th>Course Name</th>
+                                    <th>Credits</th>
+                                    <th>Semester</th>
+                                    <th>Enrollment Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var enrollment in myEnrollments)
+                                {
+                                    <tr>
+                                        <td class="ps-4"><strong>@enrollment.Course?.CourseCode</strong></td>
+                                        <td>@enrollment.Course?.CourseName</td>
+                                        <td><span class="badge bg-info">@enrollment.Course?.Credits</span></td>
+                                        <td>Sem @enrollment.Semester - @enrollment.AcademicYear</td>
+                                        <td>@enrollment.EnrollmentDate.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            @if (enrollment.Status == "Enrolled")
+                                            {
+                                                <span class="badge bg-success">Active</span>
+                                            }
+                                            else if (enrollment.Status == "Completed")
+                                            {
+                                                <span class="badge bg-info">Completed</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning">@enrollment.Status</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="card-body text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p>Student has not enrolled in any of your courses</p>
+                    </div>
+                }
+            </div>
+
+            <!-- All Enrollments -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-info">
+                        <i class="fas fa-book-open me-2"></i> All Enrolled Courses
+                    </h5>
+                    <span class="badge bg-info text-white rounded-pill">@(Model.Enrollments?.Count ?? 0)</span>
+                </div>
+                @if (Model.Enrollments != null && Model.Enrollments.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-nowrap">
+                            <thead class="table-detail-header">
+                                <tr>
+                                    <th class="ps-4">Course Code</th>
+                                    <th>Course Name</th>
+                                    <th>Credits</th>
+                                    <th>Semester</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var enrollment in Model.Enrollments.OrderByDescending(e => e.EnrollmentDate))
+                                {
+                                    <tr>
+                                        <td class="ps-4">@enrollment.Course?.CourseCode</td>
+                                        <td>@enrollment.Course?.CourseName</td>
+                                        <td>@enrollment.Course?.Credits</td>
+                                        <td>Sem @enrollment.Semester - @enrollment.AcademicYear</td>
+                                        <td>
+                                            @if (enrollment.Status == "Enrolled")
+                                            {
+                                                <span class="badge bg-success">Active</span>
+                                            }
+                                            else if (enrollment.Status == "Completed")
+                                            {
+                                                <span class="badge bg-info">Completed</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning">@enrollment.Status</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="card-body text-center text-muted py-4">
+                        <p>No enrollment information available</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
