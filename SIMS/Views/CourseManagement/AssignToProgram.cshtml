@@ -1,0 +1,240 @@
+﻿@model SIMS.ViewModels.AssignCourseViewModel
+@using SIMS.Models.Entities
+@{
+    ViewData["Title"] = "Assign Course to Program";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-link-45deg me-2"></i> Assign Course to Program
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+
+                    <!-- Course Information -->
+                    @if (Model?.Course != null)
+                    {
+                        <div class="alert alert-info mb-4">
+                            <h5 class="alert-heading fw-bold">
+                                <i class="bi bi-book me-2"></i> Course information
+                            </h5>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Course code:</strong> @Model.Course.CourseCode
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Course name:</strong> @Model.Course.CourseName
+                                </div>
+                                <div class="col-md-6 mt-2">
+                                    <strong>Credits:</strong> @Model.Course.Credits
+                                </div>
+                                <div class="col-md-6 mt-2">
+                                    <strong>Department:</strong> @(Model.Course.Department?.DepartmentName ?? "Not defined")
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <form asp-action="AssignToProgram" asp-controller="CourseManagement" method="post" id="assignForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="CourseId" />
+
+                        @* Validation Summary *@
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div asp-validation-summary="All" class="alert alert-danger"></div>
+                        }
+
+                        <div class="row g-3">
+                            <!-- Program -->
+                            <div class="col-md-12">
+                                <label asp-for="ProgramId" class="form-label">
+                                    Program <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="ProgramId" asp-items="ViewBag.Programs" class="form-select"
+                                    id="ProgramId">
+                                    <option value="">-- Select training program --</option>
+                                </select>
+                                <span asp-validation-for="ProgramId" class="text-danger"></span>
+                            </div>
+
+                            <!-- Recommended Semester -->
+                            <div class="col-md-6">
+                                <label asp-for="SemesterRecommended" class="form-label">
+                                    Recommended Semester
+                                </label>
+                                <input asp-for="SemesterRecommended" type="number" class="form-control" min="1" max="8"
+                                    placeholder="Example: 1, 2, 3..." />
+                                <span asp-validation-for="SemesterRecommended" class="text-danger"></span>
+                                <small class="text-muted">Leave blank if not required (1-8)</small>
+                            </div>
+
+                            <!-- Bắt buộc -->
+                            <div class="col-md-6">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="form-check mt-2">
+                                    <input asp-for="IsRequired" class="form-check-input" type="checkbox" id="IsRequired"
+                                        checked />
+                                    <label asp-for="IsRequired" class="form-check-label">
+                                        Required course in the program
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Prerequisite Courses -->
+                            <div class="col-md-12">
+                                <label class="form-label">
+                                    Prerequisite Courses (hold Ctrl/Cmd to select multiple)
+                                </label>
+                                <select name="SelectedPrerequisiteCourseIds" class="form-select" multiple size="8">
+                                    @if (ViewBag.AllCourses != null)
+                                    {
+                                        foreach (var c in ViewBag.AllCourses as IEnumerable<dynamic>)
+                                        {
+                                            <option value="@c.CourseID">@c.DisplayText</option>
+                                        }
+                                    }
+                                </select>
+                                <small class="text-muted">Leave blank if there are no prerequisite courses</small>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                                <i class="bi bi-arrow-left me-1"></i> Back
+                            </a>
+                            <button type="submit" class="btn btn-primary shadow-sm" id="btnSubmit">
+                                <i class="bi bi-link-45deg me-1"></i> Assign to program
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Guide -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white text-primary border-bottom-0 py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-info-circle me-2"></i> Guide
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-3">How to assign a course:</h6>
+                    <ol class="small">
+                        <li>Select training program</li>
+                        <li>Enter recommended semester (1-8) or leave blank</li>
+                        <li>Check "Required" if the course is required</li>
+                        <li>Select prerequisite courses (if any)</li>
+                        <li>Click "Assign to program"</li>
+                    </ol>
+                    <hr>
+                    <h6 class="mb-3">Notes:</h6>
+                    <ul class="small mb-0">
+                        <li>Required course: Student must complete</li>
+                        <li>Elective course: Uncheck "Required"</li>
+                        <li>Recommended semester: Suggested semester to take this course</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Danh sách đã gán -->
+            @if (Model?.Course?.ProgramCourses != null && Model.Course.ProgramCourses.Any())
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light text-dark py-3">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="bi bi-list-check me-2"></i> Assigned (@Model.Course.ProgramCourses.Count)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var pc in Model.Course.ProgramCourses)
+                            {
+                                <li class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong>@(pc.AcademicProgram?.ProgramName ?? "Deleted program")</strong>
+                                            <br>
+                                            <small class="text-muted">
+                                                @if (pc.SemesterRecommended.HasValue)
+                                                {
+                                                    <span>Recommended Semester: @pc.SemesterRecommended | </span>
+                                                }
+                                                Required: @(pc.IsRequired ? "Yes" : "No")
+                                            </small>
+                                            @if (!string.IsNullOrEmpty(pc.PrerequisiteCourses))
+                                            {
+                                                <br>
+                                                <small class="text-primary">
+                                                    <i class="bi bi-link-45deg"></i> Prerequisite Courses: @pc.PrerequisiteCourses
+                                                </small>
+                                            }
+                                        </div>
+                                        <form asp-action="RemoveFromProgram" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="programCourseId" value="@pc.ProgramCourseID" />
+                                            <input type="hidden" name="courseId" value="@Model.CourseId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Confirm this unassignment?')">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center text-muted py-5">
+                        <i class="bi bi-info-circle fs-1 mb-3"></i>
+                        <p class="mb-0">Not assigned to any program</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // Debug form submit
+            $('#assignForm').on('submit', function (e) {
+                console.log('Form submitting...');
+
+                // Disable button để tránh double-click
+                $('#btnSubmit').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...');
+
+                // Log form data
+                var formData = $(this).serializeArray();
+                console.log('Form data:', formData);
+
+                // Log selected prerequisites
+                var selectedPrereqs = $('select[name="SelectedPrerequisiteCourseIds"]').val();
+                console.log('Selected Prerequisites:', selectedPrereqs);
+            });
+
+            // Log khi select thay đổi
+            $('#ProgramId').on('change', function () {
+                console.log('Selected program:', $(this).val());
+            });
+        });
+    </script>
+}

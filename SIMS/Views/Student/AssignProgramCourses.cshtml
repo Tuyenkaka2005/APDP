@@ -1,0 +1,72 @@
+@model SIMS.Models.Entities.Student
+
+@{
+    ViewData["Title"] = "Assign Program Courses";
+    var courses = ViewBag.CoursesToAssign as List<SIMS.Models.Entities.Course>;
+}
+
+<h1>Assign Program Courses</h1>
+
+<h3 class="mt-4">Confirm Assignment</h3>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Student:</dt>
+                    <dd class="col-sm-8">@Model.User.FullName</dd>
+
+                    <dt class="col-sm-4">Student Code:</dt>
+                    <dd class="col-sm-8">@Model.StudentCode</dd>
+
+                    <dt class="col-sm-4">Program:</dt>
+                    <dd class="col-sm-8">@Model.AcademicPrograms.ProgramName</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mt-4">List of Courses to be Assigned (@(courses?.Count ?? 0) courses)</h4>
+
+@if (courses != null && courses.Any())
+{
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="table-light">
+            <tr>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Credits</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in courses)
+            {
+                <tr>
+                    <td>@course.CourseCode</td>
+                    <td>@course.CourseName</td>
+                    <td>@course.Credits</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <form asp-action="AssignProgramCourses" class="mt-4">
+        <input type="hidden" asp-for="StudentID" />
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle me-1"></i> Confirm Assignment
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+}
+else
+{
+    <div class="alert alert-info mt-3">
+        <i class="bi bi-info-circle me-2"></i>This student has already registered all courses in this program.
+    </div>
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+}

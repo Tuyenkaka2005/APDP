@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SIMS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SIMS.styles.css" asp-append-version="true" />
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-mortarboard-fill me-2 fs-4"></i>
+                    SIMS
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <!-- removed default Home/Privacy links for cleaner look unless needed -->
+                    </ul>
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        @if (Context.Session.GetInt32("UserID") != null)
+                        {
+                            var role = Context.Session.GetString("RoleName");
+                            var fullName = Context.Session.GetString("FullName");
+
+                            <li class="nav-item me-3">
+                                <span class="nav-link text-dark">
+                                    <i class="bi bi-person-circle me-1 text-primary"></i>
+                                    Hi, <strong>@fullName</strong>
+                                </span>
+                            </li>
+
+                            @if (role == "Admin")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Admin" asp-action="Index">
+                                        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Student" asp-action="Index">
+                                        <i class="bi bi-people me-1"></i> Students
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="FacultyManagement" asp-action="Index">
+                                        <i class="bi bi-person-video3 me-1"></i> Faculty
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="CourseManagement" asp-action="Index">
+                                        <i class="bi bi-book me-1"></i> Courses
+                                    </a>
+                                </li>
+                            }
+                            else if (role == "Faculty")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Faculty" asp-action="Index">
+                                        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Faculty" asp-action="MyCourses">
+                                        <i class="bi bi-journal-bookmark me-1"></i> Classes
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Faculty" asp-action="StudentList">
+                                        <i class="bi bi-people me-1"></i> Students
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Faculty" asp-action="Profile">
+                                        <i class="bi bi-person-vcard me-1"></i> Profile
+                                    </a>
+                                </li>
+                            }
+                            else if (role == "Student")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="StudentPortal" asp-action="Index">
+                                        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="StudentPortal" asp-action="MyCourses">
+                                        <i class="bi bi-journal-bookmark me-1"></i> Courses
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="StudentPortal" asp-action="Grades">
+                                        <i class="bi bi-clipboard-data me-1"></i> Grades
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="StudentPortal" asp-action="Profile">
+                                        <i class="bi bi-person-vcard me-1"></i> Profile
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="nav-item ms-2">
+                            <li class="nav-item ms-2">
+                                <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center"
+                                    data-bs-toggle="modal" data-bs-target="#logoutModal">
+                                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                                </button>
+                            </li>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-primary btn-sm" asp-controller="Auth" asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- App Container -->
+    <div class="container flex-grow-1" style="padding-top: 90px;">
+        <main role="main" class="pb-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-center text-muted mt-auto py-3 bg-white">
+        <div class="container">
+            <small>&copy; 2025 - <strong>SIMS</strong> (Student Information Management System)</small>
+        </div>
+    </footer>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white border-0">
+                    <h5 class="modal-title fw-bold" id="logoutModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Logout
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-3">
+                        <div class="avatar-placeholder mx-auto bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 64px; height: 64px;">
+                            <i class="bi bi-box-arrow-right fs-2"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-2">Are you sure you want to logout?</h5>
+                    <p class="text-muted mb-0">Your current session will end.</p>
+                </div>
+                <div class="modal-footer border-0 bg-light justify-content-center p-3">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <a asp-controller="Auth" asp-action="Logout" class="btn btn-danger px-4">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

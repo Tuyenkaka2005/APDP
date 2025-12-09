@@ -1,0 +1,162 @@
+﻿@model SIMS.Models.ViewModels.CourseViewModel
+@{
+    ViewData["Title"] = "Edit Course";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Edit Course
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="CourseID" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="row g-3">
+                            <!-- Course Code -->
+                            <div class="col-md-6">
+                                <label asp-for="CourseCode" class="form-label">
+                                    Course Code <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="CourseCode" class="form-control" />
+                                <span asp-validation-for="CourseCode" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Course Name -->
+                            <div class="col-md-6">
+                                <label asp-for="CourseName" class="form-label">
+                                    Course Name <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="CourseName" class="form-control" />
+                                <span asp-validation-for="CourseName" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Credits -->
+                            <div class="col-md-4">
+                                <label asp-for="Credits" class="form-label">
+                                    Credits <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Credits" type="number" class="form-control" min="1" max="10" />
+                                <span asp-validation-for="Credits" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Department -->
+                            <div class="col-md-8">
+                                <label asp-for="DepartmentID" class="form-label">
+                                    Department <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="DepartmentID" asp-items="ViewBag.Departments" class="form-select">
+                                    <option value="">-- Select a department --</option>
+                                </select>
+                                <span asp-validation-for="DepartmentID" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Faculty -->
+                            <div class="col-md-6">
+                                <label asp-for="FacultyID" class="form-label">
+                                    Faculty
+                                </label>
+                                <select asp-for="FacultyID" asp-items="ViewBag.Faculties" class="form-select">
+                                    <option value="">-- Select a faculty --</option>
+                                </select>
+                                <span asp-validation-for="FacultyID" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Semester -->
+                            <div class="col-md-3">
+                                <label asp-for="Semester" class="form-label">
+                                    Semester <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="Semester" class="form-select">
+                                    <option value="">-- Select a semester --</option>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                    <option value="3">Semester 3</option>
+                                </select>
+                                <span asp-validation-for="Semester" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Academic Year -->
+                            <div class="col-md-3">
+                                <label asp-for="AcademicYear" class="form-label">
+                                    Academic Year <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="AcademicYear" type="text" class="form-control" />
+                                <span asp-validation-for="AcademicYear" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Schedule -->
+                            <div class="col-md-12">
+                                <label asp-for="Schedule" class="form-label">
+                                    Schedule
+                                </label>
+                                <input asp-for="Schedule" class="form-control" />
+                                <span asp-validation-for="Schedule" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Room -->
+                            <div class="col-md-6">
+                                <label asp-for="Room" class="form-label">
+                                    Room
+                                </label>
+                                <input asp-for="Room" class="form-control" />
+                                <span asp-validation-for="Room" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Maximum Students -->
+                            <div class="col-md-6">
+                                <label asp-for="MaxStudents" class="form-label">
+                                    Maximum Students <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="MaxStudents" type="number" class="form-control" min="1" />
+                                <span asp-validation-for="MaxStudents" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-md-12">
+                                <label asp-for="Description" class="form-label">
+                                    Description
+                                </label>
+                                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsActive" class="form-check-label">
+                                        Course is active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

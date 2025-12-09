@@ -1,0 +1,102 @@
+﻿@model SIMS.Models.ViewModels.CourseViewModel
+@{
+    ViewData["Title"] = "Delete Course";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Confirm delete course
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <strong>Warning!</strong> Are you sure you want to delete this course?
+                        This action cannot be undone.
+                    </div>
+
+                    <!-- Course information -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger mb-3">Course information will be deleted:</h5>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Course code</label>
+                                    <p class="fw-bold">@Model.CourseCode</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Course name</label>
+                                    <p class="fw-bold">@Model.CourseName</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="text-muted small">Credits</label>
+                                    <p><span class="badge bg-info">@Model.Credits</span></p>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="text-muted small">Department</label>
+                                    <p>@Model.DepartmentName</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Faculty</label>
+                                    <p>@Model.FacultyName</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Semester - Academic year</label>
+                                    <p>Semester @Model.Semester - @Model.AcademicYear</p>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="text-muted small">Schedule</label>
+                                    <p>@(Model.Schedule ?? "Not scheduled")</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Room</label>
+                                    <p>@(Model.Room ?? "Not scheduled")</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small">Max students</label>
+                                    <p>@Model.MaxStudents students</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Form xác nhận xóa -->
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="CourseID" />
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-trash-alt"></i> Confirm delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Thông tin bổ sung -->
+            <div class="card border-0 shadow-sm mt-4 bg-light">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">
+                        <i class="fas fa-question-circle"></i> What will happen when deleting?
+                    </h6>
+                    <ul class="text-muted small mb-0">
+                        <li>Course information will be permanently deleted from the system</li>
+                        <li>Student registration records may be affected</li>
+                        <li>Related history may be lost</li>
+                        <li>This action cannot be undone</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

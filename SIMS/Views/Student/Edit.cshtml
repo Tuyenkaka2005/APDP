@@ -1,0 +1,113 @@
+﻿@model SIMS.Models.ViewModels.StudentViewModel
+@{
+    ViewData["Title"] = "Edit Student";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-dark py-3">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Edit Student
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Student:</strong> @ViewBag.UserFullName
+                    </div>
+
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="StudentID" />
+                        <input type="hidden" asp-for="UserID" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-graduation-cap text-warning"></i> Student Information
+                        </h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label asp-for="StudentCode" class="form-label"></label>
+                                <input asp-for="StudentCode" class="form-control" />
+                                <span asp-validation-for="StudentCode" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="AdmissionDate" class="form-label"></label>
+                                <input asp-for="AdmissionDate" class="form-control" type="date" />
+                                <span asp-validation-for="AdmissionDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="AdmissionType" class="form-label"></label>
+                                <select asp-for="AdmissionType" class="form-select">
+                                    <option value="">-- Select admission type --</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="High Quality">High Quality</option>
+                                    <option value="Joint">Joint</option>
+                                    <option value="Bachelor 2">Bachelor 2</option>
+                                </select>
+                                <span asp-validation-for="AdmissionType" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ProgramID" class="form-label"></label>
+                                <select asp-for="ProgramID" class="form-select" asp-items="ViewBag.Programs">
+                                    <option value="">-- Select program --</option>
+                                </select>
+                                <span asp-validation-for="ProgramID" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DepartmentID" class="form-label"></label>
+                                <select asp-for="DepartmentID" class="form-select" asp-items="ViewBag.Departments">
+                                    <option value="">-- Select department --</option>
+                                </select>
+                                <span asp-validation-for="DepartmentID" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label asp-for="GPA" class="form-label"></label>
+                                <input asp-for="GPA" class="form-control" type="number" step="0.01" min="0" max="4" />
+                                <span asp-validation-for="GPA" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="TotalCredits" class="form-label"></label>
+                                <input asp-for="TotalCredits" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="TotalCredits" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Status" class="form-label"></label>
+                                <select asp-for="Status" class="form-select">
+                                    <option value="Active">Active</option>
+                                    <option value="Suspended">Suspended</option>
+                                    <option value="Graduated">Graduated</option>
+                                    <option value="Dropped">Dropped</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

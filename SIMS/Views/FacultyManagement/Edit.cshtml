@@ -1,0 +1,123 @@
+﻿@model SIMS.Models.ViewModels.FacultyViewModel
+@{
+    ViewData["Title"] = "Edit Faculty";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Faculty
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info shadow-sm border-0 mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Editing for faculty: <strong>@ViewBag.UserFullName</strong>
+                    </div>
+
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="FacultyID" />
+                        <input type="hidden" asp-for="UserID" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger shadow-sm border-0 mb-4">
+                        </div>
+
+                        <h6 class="text-primary fw-bold text-uppercase border-bottom pb-2 mb-4">
+                            <i class="bi bi-briefcase me-1"></i> Faculty Information
+                        </h6>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="EmployeeCode" class="form-label fw-bold text-secondary normal">Employee
+                                    Code</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i
+                                            class="bi bi-person-badge"></i></span>
+                                    <input asp-for="EmployeeCode" class="form-control" />
+                                </div>
+                                <span asp-validation-for="EmployeeCode" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="HireDate" class="form-label fw-bold text-secondary normal">Hire
+                                    Date</label>
+                                <input asp-for="HireDate" class="form-control" type="date" />
+                                <span asp-validation-for="HireDate" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Qualification"
+                                    class="form-label fw-bold text-secondary normal">Qualification</label>
+                                <select asp-for="Qualification" class="form-select">
+                                    <option value="">-- Select qualification --</option>
+                                    <option value="Doctor">Doctor</option>
+                                    <option value="Master">Master</option>
+                                    <option value="Engineer">Engineer</option>
+                                    <option value="Bachelor">Bachelor</option>
+                                </select>
+                                <span asp-validation-for="Qualification" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="Specialization"
+                                    class="form-label fw-bold text-secondary normal">Specialization</label>
+                                <input asp-for="Specialization" class="form-control"
+                                    placeholder="VD: Computer Science..." />
+                                <span asp-validation-for="Specialization" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Position"
+                                    class="form-label fw-bold text-secondary normal">Position</label>
+                                <select asp-for="Position" class="form-select">
+                                    <option value="">-- Select position --</option>
+                                    <option value="Lecturer">Lecturer</option>
+                                    <option value="Senior Lecturer">Senior Lecturer</option>
+                                    <option value="Associate Professor">Associate Professor</option>
+                                    <option value="Professor">Professor</option>
+                                    <option value="Department Head">Department Head</option>
+                                    <option value="Deputy Head of Department">Deputy Head of Department</option>
+                                </select>
+                                <span asp-validation-for="Position" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="DepartmentID"
+                                    class="form-label fw-bold text-secondary normal">Department</label>
+                                <select asp-for="DepartmentID" class="form-select" asp-items="ViewBag.Departments">
+                                    <option value="">-- Select department --</option>
+                                </select>
+                                <span asp-validation-for="DepartmentID" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="OfficeLocation" class="form-label fw-bold text-secondary normal">Office
+                                Location</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-building"></i></span>
+                                <input asp-for="OfficeLocation" class="form-control" placeholder="VD: Office A101..." />
+                            </div>
+                            <span asp-validation-for="OfficeLocation" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-5">
+                            <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                                <i class="bi bi-x-lg me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary shadow-sm">
+                                <i class="bi bi-check-circle-fill me-1"></i> Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

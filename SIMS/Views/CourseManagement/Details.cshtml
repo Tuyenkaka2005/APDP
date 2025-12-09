@@ -1,0 +1,176 @@
+﻿@model SIMS.Models.ViewModels.CourseViewModel
+@{
+    ViewData["Title"] = "Course details";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Thông tin cơ bản -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        Course information
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small">Course code</label>
+                            <p class="fw-bold fs-5">@Model.CourseCode</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Course name</label>
+                            <p class="fw-bold fs-5">@Model.CourseName</p>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="text-muted small">Credits</label>
+                            <p><span class="badge bg-info fs-6">@Model.Credits</span></p>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="text-muted small">Department</label>
+                            <p class="fw-bold">@Model.DepartmentName</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Faculty</label>
+                            <p class="fw-bold">@Model.FacultyName</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Semester - Academic Year</label>
+                            <p><span class="badge bg-primary">HK @Model.Semester - @Model.AcademicYear</span></p>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="text-muted small">Schedule</label>
+                            <p>@(Model.Schedule ?? "Not scheduled")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Room</label>
+                            <p>@(Model.Room ?? "Not scheduled")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Max students</label>
+                            <p class="fw-bold">@Model.MaxStudents</p>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="text-muted small">Description</label>
+                            <p>@(Model.Description ?? "Không có mô tả")</p>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="text-muted small">Status</label>
+                            <p>
+                                @if (Model.IsActive)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danh sách sinh viên đăng ký -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        List of students enrolled (@ViewBag.EnrollmentCount)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Enrollments != null &&
+                    ((IEnumerable<SIMS.Models.Entities.Enrollment>)ViewBag.Enrollments).Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Student name</th>
+                                        <th>Class</th>
+                                        <th>Enrollment date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var e in (IEnumerable<SIMS.Models.Entities.Enrollment>)ViewBag.Enrollments)
+                                    {
+                                        <tr>
+                                            <td>@e.Student?.StudentCode</td>
+                                            <td>@e.Student?.User?.FullName</td>
+                                            <td>@e.Student?.AcademicPrograms?.ProgramName</td>
+                                            <td>@e.EnrollmentDate.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-3 mb-0">
+                            No students enrolled
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Thay đoạn này trong phần Thống kê -->
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted small">Number of students enrolled</label>
+                    @{
+                        int enrolledCount = ViewBag.EnrollmentCount ?? 0;
+                        double percentage = Model.MaxStudents > 0
+                        ? (double)enrolledCount / Model.MaxStudents * 100
+                        : 0;
+                    }
+                    <h3 class="mb-0">@enrolledCount/@Model.MaxStudents</h3>
+                    <div class="progress mt-2" style="height: 12px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @(percentage)%"
+                            aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                    <small class="text-muted">@($"{percentage:F1}%") enrolled</small>
+                </div>
+                <hr>
+                <div>
+                    <label class="text-muted small">Remaining seats</label>
+                    <h4 class="mb-0 text-success">
+                        @(Model.MaxStudents - enrolledCount)
+                    </h4>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.CourseID" class="btn btn-warning">
+                            Edit
+                        </a>
+                        <a asp-action="AssignToProgram" asp-route-id="@Model.CourseID" class="btn btn-success">
+                            Assign to program
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.CourseID" class="btn btn-danger">
+                            Delete course
+                        </a>
+                        <hr>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            Back to list
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

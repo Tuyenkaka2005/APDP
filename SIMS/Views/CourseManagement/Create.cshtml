@@ -1,0 +1,164 @@
+﻿@model SIMS.Models.ViewModels.CourseViewModel
+@{
+    ViewData["Title"] = "Add new subject";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus-circle"></i> Add new subject
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="row g-3">
+                            <!-- Mã môn học -->
+                            <div class="col-md-6">
+                                <label asp-for="CourseCode" class="form-label">
+                                    Course code <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="CourseCode" class="form-control" placeholder="VD: CS101" />
+                                <span asp-validation-for="CourseCode" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Tên môn học -->
+                            <div class="col-md-6">
+                                <label asp-for="CourseName" class="form-label">
+                                    Course name <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="CourseName" class="form-control" placeholder="VD: Programming C#" />
+                                <span asp-validation-for="CourseName" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Tín chỉ -->
+                            <div class="col-md-4">
+                                <label asp-for="Credits" class="form-label">
+                                    Credits <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Credits" type="number" class="form-control" min="1" max="10" />
+                                <span asp-validation-for="Credits" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Khoa -->
+                            <div class="col-md-8">
+                                <label asp-for="DepartmentID" class="form-label">
+                                    Department <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="DepartmentID" asp-items="ViewBag.Departments" class="form-select">
+                                    <option value="">-- Select a department --</option>
+                                </select>
+                                <span asp-validation-for="DepartmentID" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Giảng viên -->
+                            <div class="col-md-6">
+                                <label asp-for="FacultyID" class="form-label">
+                                    Faculty
+                                </label>
+                                <select asp-for="FacultyID" asp-items="ViewBag.Faculties" class="form-select">
+                                    <option value="">-- Select a faculty --</option>
+                                </select>
+                                <span asp-validation-for="FacultyID" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Học kỳ -->
+                            <div class="col-md-3">
+                                <label asp-for="Semester" class="form-label">
+                                    Semester <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="Semester" class="form-select">
+                                    <option value="">-- Select a semester --</option>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                    <option value="3">Semester 3</option>
+                                </select>
+                                <span asp-validation-for="Semester" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Năm học -->
+                            <div class="col-md-3">
+                                <label asp-for="AcademicYear" class="form-label">
+                                    Academic year <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="AcademicYear" type="text" class="form-control"
+                                    placeholder="2024-2025" />
+                                <span asp-validation-for="AcademicYear" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Lịch học -->
+                            <div class="col-md-12">
+                                <label asp-for="Schedule" class="form-label">
+                                    Schedule
+                                </label>
+                                <input asp-for="Schedule" class="form-control"
+                                    placeholder="VD: Monday, Tuesday - 7:00-9:30" />
+                                <span asp-validation-for="Schedule" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Phòng học -->
+                            <div class="col-md-6">
+                                <label asp-for="Room" class="form-label">
+                                    Room
+                                </label>
+                                <input asp-for="Room" class="form-control" placeholder="VD: A101" />
+                                <span asp-validation-for="Room" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Số sinh viên tối đa -->
+                            <div class="col-md-6">
+                                <label asp-for="MaxStudents" class="form-label">
+                                    Max students <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="MaxStudents" type="number" class="form-control" min="1" value="50" />
+                                <span asp-validation-for="MaxStudents" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Mô tả -->
+                            <div class="col-md-12">
+                                <label asp-for="Description" class="form-label">
+                                    Description
+                                </label>
+                                <textarea asp-for="Description" class="form-control" rows="4"
+                                    placeholder="Enter course description..."></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Trạng thái -->
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                                    <label asp-for="IsActive" class="form-check-label">
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

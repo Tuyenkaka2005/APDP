@@ -1,0 +1,220 @@
+﻿@model IEnumerable<SIMS.Models.ViewModels.CourseViewModel>
+@{
+    ViewData["Title"] = "Subject Management";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary mb-0">
+                <i class="bi bi-book-half me-2"></i>Subject Management
+            </h2>
+            <p class="text-muted mb-0">List and manage subject information</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Add New
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Search & Filter Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body bg-light rounded-3">
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-secondary small text-uppercase">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="searchString" value="@ViewBag.SearchString"
+                               class="form-control border-start-0 ps-0" placeholder="Subject ID, Subject Name...">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold text-secondary small text-uppercase">Department</label>
+                    <select name="departmentId" class="form-select">
+                        <option value="">-- All --</option>
+                        @foreach (var item in ViewBag.Departments as SelectList)
+                        {
+                            <option value="@item.Value" selected="@(item.Value == ViewBag.DepartmentId?.ToString())">
+                                @item.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold text-secondary small text-uppercase">Faculty</label>
+                    <select name="facultyId" class="form-select">
+                        <option value="">-- All --</option>
+                        @foreach (var item in ViewBag.Faculties as SelectList)
+                        {
+                            <option value="@item.Value" selected="@(item.Value == ViewBag.FacultyId?.ToString())">
+                                @item.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold text-secondary small text-uppercase">Semester</label>
+                    <select name="semester" class="form-select">
+                        <option value="">-- All --</option>
+                        @foreach (var item in ViewBag.Semesters as SelectList)
+                        {
+                            <option value="@item.Value" selected="@(item.Value == ViewBag.Semester)">
+                                @item.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold text-secondary small text-uppercase">Academic Year</label>
+                    <select name="academicYear" class="form-select">
+                        <option value="">-- All --</option>
+                        @foreach (var item in ViewBag.AcademicYears as SelectList)
+                        {
+                            <option value="@item.Value" selected="@(item.Value == ViewBag.AcademicYear)">
+                                @item.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel-fill"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Data Table Card -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary">
+                        <tr>
+                            <th class="ps-4">Subject ID</th>
+                            <th>Subject Name</th>
+                            <th class="text-center">Credits</th>
+                            <th>Department</th>
+                            <th>Faculty</th>
+                            <th>Semester</th>
+                            <th>Room</th>
+                            <th class="text-center">Capacity</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-primary">@item.CourseCode</td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-bold">@item.CourseName</span>
+                                            <span class="text-muted small">@item.DepartmentName</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center"><span class="badge bg-light text-dark border">@item.Credits</span></td>
+                                    <td class="text-muted">@item.DepartmentName</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.FacultyName))
+                                        {
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-person-circle text-muted me-2"></i>@item.FacultyName
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Not assigned</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="small">
+                                            <div class="fw-bold">@item.Semester</div>
+                                            <div class="text-muted">@item.AcademicYear</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.Room))
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">@item.Room</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">TBA</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">@item.MaxStudents</td>
+                                    <td class="text-center">
+                                        @if (item.IsActive)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill">Inactive</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Details" asp-route-id="@item.CourseID"
+                                               class="btn btn-outline-secondary border-0" data-bs-toggle="tooltip" title="Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.CourseID"
+                                               class="btn btn-outline-primary border-0" data-bs-toggle="tooltip" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="AssignToProgram" asp-route-id="@item.CourseID" 
+                                               class="btn btn-outline-success border-0" data-bs-toggle="tooltip" title="Assign to program">
+                                                <i class="bi bi-diagram-3"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.CourseID"
+                                               class="btn btn-outline-danger border-0" data-bs-toggle="tooltip" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="10" class="text-center text-muted py-5">
+                                    <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+                                    No matching subjects found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-white border-top-0 py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small">Displaying <strong>@Model.Count()</strong> results</span>
+                <!-- Pagination could go here -->
+            </div>
+        </div>
+    </div>
+</div>

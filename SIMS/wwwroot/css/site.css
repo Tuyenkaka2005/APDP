@@ -1,0 +1,197 @@
+/* Global Variables */
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --info-color: #0dcaf0;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --light-bg: #f8f9fa;
+    --dark-text: #212529;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --hover-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+html,
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--dark-text);
+    background-color: var(--light-bg);
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--glass-bg) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: var(--primary-color) !important;
+    letter-spacing: -0.5px;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: white;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--hover-shadow);
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+    padding: 1.25rem;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    transform: translateY(-1px);
+}
+
+/* Tables */
+.table {
+    vertical-align: middle;
+}
+
+.table thead th {
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+    background-color: transparent;
+}
+
+/* Badges */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.8em;
+    border-radius: 6px;
+}
+
+/* Footer */
+.footer {
+    background-color: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+    padding: 1.5rem 0;
+    font-size: 0.9rem;
+}
+
+/* Utilities */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.shadow-sm {
+    box-shadow: var(--card-shadow) !important;
+}
+
+/* Login Page Specific */
+.login-container {
+    max-width: 400px;
+    margin: 4rem auto;
+}
+
+/* Student Profile Specific */
+.profile-card-header {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(248, 249, 250, 1) 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.avatar-icon {
+    filter: drop-shadow(0 4px 10px rgba(13, 110, 253, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.avatar-icon:hover {
+    transform: scale(1.05);
+}
+
+.info-label {
+    color: var(--secondary-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.info-value {
+    color: var(--dark-text);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.table-detail-header th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: var(--secondary-color);
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Custom Light Backgrounds for Icon Containers */
+.bg-light-primary {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+    color: #0d6efd !important;
+}
+
+.bg-light-success {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    color: #198754 !important;
+}
+
+.bg-light-info {
+    background-color: rgba(13, 202, 240, 0.1) !important;
+    color: #0dcaf0 !important;
+}
+
+.bg-light-danger {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
