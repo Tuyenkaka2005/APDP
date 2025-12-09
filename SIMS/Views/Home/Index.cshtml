@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row align-items-center mb-5 pb-5 mt-4">
+        <div class="col-lg-6">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill mb-3 px-3 py-2">
+                <i class="bi bi-stars me-2"></i>Education Management System 4.0
+            </span>
+            <h1 class="display-4 fw-bold mb-4 text-gradient-primary">
+                Management System<br />Student Information
+            </h1>
+            <p class="lead text-muted mb-4">
+                A comprehensive solution connecting schools, teachers, and students.
+                Manage student records, track grades, and enroll courses efficiently.
+            </p>
+            <div class="d-flex gap-3">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="StudentPortal" asp-action="Index"
+                        class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill">
+                        <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Auth" asp-action="Login" class="btn btn-primary btn-lg shadow-sm px-4 rounded-pill">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login Now
+                    </a>
+                }
+                <a href="#" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">
+                    <i class="bi bi-info-circle me-2"></i>Learn More
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <div class="position-relative">
+                <div class="position-absolute top-50 start-50 translate-middle w-75 h-75 bg-primary opacity-10 rounded-circle blur-3xl"
+                    style="z-index: -1;"></div>
+                <img src="https://cdn-icons-png.flaticon.com/512/3330/3330314.png" alt="Education Illustration"
+                    class="img-fluid floating-animation"
+                    style="max-height: 400px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-4 py-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">Features</h2>
+            <p class="text-muted">Bring the best experience to users</p>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-success-subtle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                        style="width: 64px; height: 64px;">
+                        <i class="bi bi-graph-up-arrow fs-3 text-success"></i>
+                    </div>
+                    <h5 class="fw-bold">Grade Management</h5>
+                    <p class="text-muted small">
+                        Update and track academic results in real-time.
+                        Support grade conversion and average statistics.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-info-subtle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                        style="width: 64px; height: 64px;">
+                        <i class="bi bi-person-vcard fs-3 text-info"></i>
+                    </div>
+                    <h5 class="fw-bold">Student Profile</h5>
+                    <p class="text-muted small">
+                        Store personal information, academic progress, and
+                        student activity history securely.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-warning-subtle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                        style="width: 64px; height: 64px;">
+                        <i class="bi bi-calendar-check fs-3 text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold">Credit Registration</h5>
+                    <p class="text-muted small">
+                        Flexible credit registration system,
+                        intuitive interface helps students easily build study plans.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="row py-5 mt-4 bg-light rounded-4">
+        <div class="col-md-3 text-center mb-3 mb-md-0">
+            <h2 class="fw-bold text-primary">1000+</h2>
+            <p class="text-muted mb-0">Students</p>
+        </div>
+        <div class="col-md-3 text-center mb-3 mb-md-0">
+            <h2 class="fw-bold text-success">50+</h2>
+            <p class="text-muted mb-0">Teachers</p>
+        </div>
+        <div class="col-md-3 text-center mb-3 mb-md-0">
+            <h2 class="fw-bold text-info">100%</h2>
+            <p class="text-muted mb-0">Online</p>
+        </div>
+        <div class="col-md-3 text-center">
+            <h2 class="fw-bold text-warning">24/7</h2>
+            <p class="text-muted mb-0">Support</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .blur-3xl {
+        filter: blur(64px);
+    }
+
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .text-gradient-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    @@keyframes float {
+        0% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-15px);
+        }
+
+        100% {
+            transform: translateY(0px);
+        }
+    }
+
+    .floating-animation {
+        animation: float 4s ease-in-out infinite;
+    }
+</style>
