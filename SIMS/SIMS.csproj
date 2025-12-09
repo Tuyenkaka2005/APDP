@@ -11,6 +11,10 @@
     <Content Remove="Areas\**" />
     <EmbeddedResource Remove="Areas\**" />
     <None Remove="Areas\**" />
+    <Compile Remove="SIMS.Tests\**" />
+    <Content Remove="SIMS.Tests\**" />
+    <EmbeddedResource Remove="SIMS.Tests\**" />
+    <None Remove="SIMS.Tests\**" />
   </ItemGroup>
 
   <ItemGroup>

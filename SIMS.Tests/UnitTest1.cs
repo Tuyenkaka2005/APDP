@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace SIMS.Tests;
 
 public class UnitTest1

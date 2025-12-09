@@ -1,0 +1,193 @@
+﻿@model SIMS.Models.Entities.Faculty
+@{
+    ViewData["Title"] = "Personal Information";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="fas fa-user-circle text-primary"></i> Personal Information
+            </h2>
+            <p class="text-muted">Account information and teaching activities</p>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Personal Info -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <div class="py-4">
+                        <i class="fas fa-user-circle fa-5x mb-3"></i>
+                        <h4 class="mb-0">@Model.User?.FullName</h4>
+                        <p class="mb-0 opacity-75">@Model.EmployeeCode</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-info-circle"></i> Basic Information
+                    </h6>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Username</label>
+                        <p class="mb-0 fw-bold">@Model.User?.Username</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Email</label>
+                        <p class="mb-0">
+                            <a href="mailto:@Model.User?.Email">
+                                <i class="fas fa-envelope"></i> @Model.User?.Email
+                            </a>
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Phone</label>
+                        <p class="mb-0">
+                            <i class="fas fa-phone"></i> @(Model.User?.Phone ?? "Not updated")
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Date of Birth</label>
+                        <p class="mb-0">
+                            <i class="fas fa-birthday-cake"></i>
+                            @(Model.User?.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Not updated")
+                        </p>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="text-muted small">Address</label>
+                        <p class="mb-0">
+                            <i class="fas fa-map-marker-alt"></i> @(Model.User?.Address ?? "Not updated")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Work Info -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-briefcase"></i> Work Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Employee ID</label>
+                            <p class="fw-bold fs-5">@Model.EmployeeCode</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Department</label>
+                            <p class="fw-bold fs-5">@Model.Department?.DepartmentName</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Position</label>
+                            <p class="fw-bold">@(Model.Position ?? "Lecturer")</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Qualification</label>
+                            <p>@(Model.Qualification ?? "Not updated")</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Specialization</label>
+                            <p>@(Model.Specialization ?? "Not updated")</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Hire Date</label>
+                            <p>@(Model.HireDate?.ToString("dd/MM/yyyy") ?? "Not updated")</p>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="text-muted small">Office</label>
+                            <p class="mb-0">
+                                <i class="fas fa-door-open"></i> @(Model.OfficeLocation ?? "Not updated")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> Teaching Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-6">
+                            <div class="p-3">
+                                <i class="fas fa-book fa-3x text-primary mb-2"></i>
+                                <h3 class="mb-0">@ViewBag.TotalCourses</h3>
+                                <p class="text-muted mb-0">Courses Teaching</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3">
+                                <i class="fas fa-users fa-3x text-success mb-2"></i>
+                                <h3 class="mb-0">@ViewBag.TotalStudents</h3>
+                                <p class="text-muted mb-0">Students Teaching</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Courses -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book-open"></i> Recent Courses
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Courses != null && Model.Courses.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var course in Model.Courses.Where(c => c.IsActive).Take(5))
+                            {
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">@course.CourseCode - @course.CourseName</h6>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar"></i> HK @course.Semester - @course.AcademicYear
+                                                | <i class="fas fa-users"></i> @course.MaxStudents students
+                                            </small>
+                                        </div>
+                                        <a asp-action="CourseDetails" asp-route-id="@course.CourseID"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <p class="mb-0">No courses yet</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
