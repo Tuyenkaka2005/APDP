@@ -152,7 +152,7 @@ CREATE TABLE ProgramCourse (
     IsRequired          BIT DEFAULT 1,            -- Bắt buộc hay tự chọn
     SemesterRecommended INT,                      -- Học kỳ đề xuất
     PrerequisiteCourses NVARCHAR(500),            -- Danh sách mã môn tiên quyết
-    CONSTRAINT FK_ProgramCourse_Program FOREIGN KEY (ProgramID) REFERENCES Program(ProgramID),
+    CONSTRAINT FK_ProgramCourse_Program FOREIGN KEY (ProgramID) REFERENCES AcademicPrograms(ProgramID),
     CONSTRAINT FK_ProgramCourse_Course FOREIGN KEY (CourseID) REFERENCES Course(CourseID),
     CONSTRAINT UQ_ProgramCourse UNIQUE (ProgramID, CourseID)
 );
