@@ -1,0 +1,311 @@
+﻿@model SIMS.Models.Entities.Enrollment
+@{
+    ViewData["Title"] = "Course details";
+    var grade = ViewBag.Grade as SIMS.Models.Entities.Grade;
+}
+
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="MyCourses">My courses</a></li>
+            <li class="breadcrumb-item active">Course details</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="bi bi-journal-bookmark me-2"></i>@Model.Course.CourseName</h2>
+            <p class="text-muted mb-0">@Model.Course.CourseCode | @Model.Course.Credits credits</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-action="MyCourses" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Thông tin môn học -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Course information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Course code</label>
+                            <p class="fw-bold">@Model.Course.CourseCode</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Course name</label>
+                            <p class="fw-bold">@Model.Course.CourseName</p>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Department</label>
+                            <p class="fw-bold">@Model.Course.Department?.DepartmentName</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Faculty</label>
+                            <p class="fw-bold">
+                                @if (Model.Course.Faculty != null)
+                                {
+                                    @Model.Course.Faculty.User.FullName
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Not assigned</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Semester</label>
+                            <p class="fw-bold">@Model.Semester</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Academic year</label>
+                            <p class="fw-bold">@Model.AcademicYear</p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Course.Schedule))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Schedule</label>
+                                <p class="fw-bold">@Model.Course.Schedule</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Room</label>
+                                <p class="fw-bold">@Model.Course.Room</p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Course.Description))
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="form-label text-muted">Description</label>
+                                <p>@Model.Course.Description</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Thông tin điểm -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Grade information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label text-muted">Midterm score</label>
+                            <h3 class="mb-0">
+                                @if (Model.MidtermScore.HasValue)
+                                {
+                                    <span class="text-primary">@Model.MidtermScore.Value.ToString("F1")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">---</span>
+                                }
+                            </h3>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted">Final score</label>
+                            <h3 class="mb-0">
+                                @if (Model.FinalScore.HasValue)
+                                {
+                                    <span class="text-primary">@Model.FinalScore.Value.ToString("F1")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">---</span>
+                                }
+                            </h3>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted">Final grade</label>
+                            <h3 class="mb-0">
+                                @if (grade != null && grade.FinalGrade.HasValue)
+                                {
+                                    <span class="text-success">@grade.FinalGrade.Value.ToString("F1")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">---</span>
+                                }
+                            </h3>
+                        </div>
+                    </div>
+
+                    @if (grade != null)
+                    {
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Letter grade</label>
+                                <h4 class="mb-0">
+                                    @if (!string.IsNullOrEmpty(grade.LetterGrade))
+                                    {
+                                        var gradeClass = grade.LetterGrade switch
+                                        {
+                                            "A" or "A+" => "text-success",
+                                            "B" or "B+" or "B-" => "text-primary",
+                                            "C" or "C+" or "C-" => "text-info",
+                                            "D" or "D+" => "text-warning",
+                                            _ => "text-danger"
+                                        };
+                                        <span class="@gradeClass">@grade.LetterGrade</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">---</span>
+                                    }
+                                </h4>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Grade status</label>
+                                <h4 class="mb-0">
+                                    @if (grade.GradeStatus == "Passed")
+                                    {
+                                        <span class="badge bg-success">Passed</span>
+                                    }
+                                    else if (grade.GradeStatus == "Failed")
+                                    {
+                                        <span class="badge bg-danger">Failed</span>
+                                    }
+                                    else if (grade.GradeStatus == "Incomplete")
+                                    {
+                                        <span class="badge bg-warning">Incomplete</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@grade.GradeStatus</span>
+                                    }
+                                </h4>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(grade.Comments))
+                        {
+                            <hr>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="form-label text-muted">Teacher's comments</label>
+                                    <div class="alert alert-info mb-0">
+                                        <i class="bi bi-chat-left-quote me-2"></i>@grade.Comments
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (grade.GradedByFaculty != null)
+                        {
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Graded by</label>
+                                    <p class="mb-0">@grade.GradedByFaculty.User.FullName</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Graded date</label>
+                                    <p class="mb-0">@grade.GradeDate.ToString("dd/MM/yyyy HH:mm")</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning mb-0">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            The grade has not been updated or there is no final grade.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Registration status -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Registration status</h5>
+                </div>
+                <div class="card-body text-center">
+                    @if (Model.Status == "Enrolled")
+                    {
+                        <i class="bi bi-check-circle text-primary" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3 text-primary">Enrolled</h4>
+                        <p class="text-muted mb-0">You are enrolled in this course</p>
+                    }
+                    else if (Model.Status == "Completed")
+                    {
+                        <i class="bi bi-trophy text-success" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3 text-success">Completed</h4>
+                        <p class="text-muted mb-0">You have completed this course</p>
+                    }
+                    else if (Model.Status == "Dropped")
+                    {
+                        <i class="bi bi-x-circle text-danger" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3 text-danger">Dropped</h4>
+                        <p class="text-muted mb-0">The course has been dropped</p>
+                    }
+                    else
+                    {
+                        <i class="bi bi-question-circle text-secondary" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3">@Model.Status</h4>
+                    }
+
+                    <hr>
+
+                    <div class="text-start">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Enrollment date:</span>
+                            <span class="fw-bold">@Model.EnrollmentDate.ToString("dd/MM/yyyy")</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Number of classes attended:</span>
+                            <span class="fw-bold">@Model.AttendanceCount</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick actions -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Quick actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="MyCourses" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left me-1"></i>Back to list
+                        </a>
+                        <a asp-action="Grades" class="btn btn-outline-success">
+                            <i class="bi bi-clipboard-check me-1"></i>View grades
+                        </a>
+                        <a asp-action="Profile" class="btn btn-outline-info">
+                            <i class="bi bi-person-circle me-1"></i>Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

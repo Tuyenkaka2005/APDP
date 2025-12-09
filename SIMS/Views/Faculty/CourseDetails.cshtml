@@ -1,0 +1,206 @@
+﻿@model SIMS.Models.Entities.Course
+@{
+    ViewData["Title"] = "Class Details";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="fas fa-book-open text-primary"></i> Class Details
+            </h2>
+            <p class="text-muted">@Model.CourseCode - @Model.CourseName</p>
+        </div>
+        <a asp-action="MyCourses" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Course Information -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Course Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-muted small">Course Code</label>
+                        <p class="fw-bold fs-5">@Model.CourseCode</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Course Name</label>
+                        <p class="fw-bold">@Model.CourseName</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Credits</label>
+                        <p><span class="badge bg-info fs-6">@Model.Credits credits</span></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Department</label>
+                        <p>@Model.Department?.DepartmentName</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Semester - Academic Year</label>
+                        <p><span class="badge bg-primary">Sem @Model.Semester - @Model.AcademicYear</span></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Schedule</label>
+                        <p>@(Model.Schedule ?? "Not scheduled")</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small">Classroom</label>
+                        <p>@(Model.Room ?? "TBA")</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="mb-0">
+                            <label class="text-muted small">Description</label>
+                            <p class="text-muted small">@Model.Description</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-muted small">Enrolled Students</label>
+                        <h3 class="mb-0">@ViewBag.EnrollmentCount/@Model.MaxStudents</h3>
+                        <div class="progress mt-2" style="height: 10px;">
+                            @{
+                                var percentage = Model.MaxStudents > 0
+                                ? (double)ViewBag.EnrollmentCount / Model.MaxStudents * 100
+                                : 0;
+                            }
+                            <div class="progress-bar" role="progressbar" style="width: @percentage%"
+                                aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                        <label class="text-muted small">Available Slots</label>
+                        <h4 class="mb-0 text-success">
+                            @(Model.MaxStudents - ViewBag.EnrollmentCount)
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student List -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users"></i> Student List
+                        <span class="badge bg-primary">@ViewBag.EnrollmentCount</span>
+                    </h5>
+                    <button class="btn btn-sm btn-success" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i> Export Excel
+                    </button>
+                </div>
+                <div class="card-body">
+                    @if (Model.Enrollments != null && Model.Enrollments.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle" id="studentTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Student ID</th>
+                                        <th>Full Name</th>
+                                        <th>Program</th>
+                                        <th>Email</th>
+                                        <th>Enrollment Date</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int stt = 1;
+                                    }
+                                    @foreach (var enrollment in Model.Enrollments!)
+                                    {
+                                        <tr>
+                                            <td>@stt</td>
+                                            <td><strong>@enrollment.Student?.StudentCode</strong></td>
+                                            <td>@enrollment.Student?.User?.FullName</td>
+                                            <td>@enrollment.Student?.AcademicPrograms?.ProgramName</td>
+                                            <td>
+                                                <a href="mailto:@enrollment.Student?.User?.Email">
+                                                    @enrollment.Student?.User?.Email
+                                                </a>
+                                            </td>
+                                            <td>@enrollment.EnrollmentDate.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                @if (enrollment.Status == "Enrolled")
+                                                {
+                                                    <span class="badge bg-success">Active</span>
+                                                }
+                                                else if (enrollment.Status == "Completed")
+                                                {
+                                                    <span class="badge bg-info">Completed</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">@enrollment.Status</span>
+                                                }
+                                            </td>
+                                            <td class="text-end">
+                                                <a asp-action="StudentDetails" asp-route-id="@enrollment.Student?.StudentID"
+                                                    class="btn btn-sm btn-info" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        stt++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <p>No students enrolled in this class yet</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function exportToExcel() {
+            // Simple export to Excel functionality
+            var table = document.getElementById('studentTable');
+            var html = table.outerHTML;
+            var url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = '@Model.CourseCode-StudentList.xls';
+            link.click();
+        }
+    </script>
+}

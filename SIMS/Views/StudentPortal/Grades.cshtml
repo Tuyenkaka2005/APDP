@@ -1,0 +1,333 @@
+﻿@model IEnumerable<SIMS.Models.Entities.Grade>
+@{
+    ViewData["Title"] = "Student Grades";
+    var student = ViewBag.Student as SIMS.Models.Entities.Student;
+}
+
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item active">Student Grades</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="bi bi-clipboard-check me-2"></i>Student Grades</h2>
+            <p class="text-muted">GPA: <strong class="text-primary fs-5">@student?.GPA.ToString("F2")</strong></p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" asp-action="Grades">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Semester</label>
+                        <select name="semester" class="form-select">
+                            <option value="">-- All --</option>
+                            @foreach (var semester in ViewBag.Semesters as List<string>)
+                            {
+                                <option value="@semester" selected="@(semester == ViewBag.SelectedSemester)">
+                                    @semester
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Academic Year</label>
+                        <select name="academicYear" class="form-select">
+                            <option value="">-- All --</option>
+                            @foreach (var year in ViewBag.AcademicYears as List<string>)
+                            {
+                                <option value="@year" selected="@(year == ViewBag.SelectedAcademicYear)">
+                                    @year
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                <i class="bi bi-search me-1"></i>Filter
+                            </button>
+                            <a asp-action="Grades" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grade Table -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Name</th>
+                                <th class="text-center">Credits</th>
+                                <th class="text-center">Semester</th>
+                                <th class="text-center">Midterm Grade</th>
+                                <th class="text-center">Final Grade</th>
+                                <th class="text-center">Total Grade</th>
+                                <th class="text-center">Grade Point</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                string currentYear = "";
+                                string currentSemester = "";
+                            }
+                            @foreach (var grade in Model)
+                            {
+                                @if (currentYear != grade.Enrollment.AcademicYear || currentSemester !=
+                               grade.Enrollment.Semester)
+                                {
+                                    currentYear = grade.Enrollment.AcademicYear;
+                                    currentSemester = grade.Enrollment.Semester;
+                                    <tr class="table-secondary">
+                                        <td colspan="9" class="fw-bold">
+                                            <i class="bi bi-calendar3 me-2"></i>@currentSemester @currentYear
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td class="fw-bold">@grade.Enrollment.Course.CourseCode</td>
+                                    <td>
+                                        <a asp-action="CourseDetail" asp-route-id="@grade.EnrollmentID"
+                                            class="text-decoration-none">
+                                            @grade.Enrollment.Course.CourseName
+                                        </a>
+                                    </td>
+                                    <td class="text-center">@grade.Enrollment.Course.Credits</td>
+                                    <td class="text-center">@grade.Enrollment.Semester</td>
+                                    <td class="text-center">
+                                        @if (grade.Enrollment.MidtermScore.HasValue)
+                                        {
+                                            <span class="badge bg-info">@grade.Enrollment.MidtermScore.Value.ToString("F1")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">---</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (grade.Enrollment.FinalScore.HasValue)
+                                        {
+                                            <span class="badge bg-info">@grade.Enrollment.FinalScore.Value.ToString("F1")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">---</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (grade.FinalGrade.HasValue)
+                                        {
+                                            var gradeValue = grade.FinalGrade.Value;
+                                            var badgeClass = gradeValue >= 8.5m ? "bg-success" :
+                                            gradeValue >= 7.0m ? "bg-primary" :
+                                            gradeValue >= 5.5m ? "bg-info" :
+                                            gradeValue >= 4.0m ? "bg-warning" : "bg-danger";
+                                            <span class="badge @badgeClass">@gradeValue.ToString("F1")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">---</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (!string.IsNullOrEmpty(grade.LetterGrade))
+                                        {
+                                            var gradeClass = grade.LetterGrade switch
+                                            {
+                                                "A" or "A+" => "text-success",
+                                                "B" or "B+" or "B-" => "text-primary",
+                                                "C" or "C+" or "C-" => "text-info",
+                                                "D" or "D+" => "text-warning",
+                                                _ => "text-danger"
+                                            };
+                                            <strong class="@gradeClass">@grade.LetterGrade</strong>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">---</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (grade.GradeStatus == "Passed")
+                                        {
+                                            <span class="badge bg-success">Passed</span>
+                                        }
+                                        else if (grade.GradeStatus == "Failed")
+                                        {
+                                            <span class="badge bg-danger">Failed</span>
+                                        }
+                                        else if (grade.GradeStatus == "Incomplete")
+                                        {
+                                            <span class="badge bg-warning">Incomplete</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@grade.GradeStatus</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Summary Statistics -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card shadow-sm border-primary">
+                    <div class="card-body text-center">
+                        <i class="bi bi-graph-up text-primary fs-1"></i>
+                        <h4 class="mt-3 mb-1 text-primary">@student?.GPA.ToString("F2")</h4>
+                        <p class="text-muted mb-0">GPA</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-success">
+                    <div class="card-body text-center">
+                        <i class="bi bi-book text-success fs-1"></i>
+                        <h4 class="mt-3 mb-1 text-success">@student?.TotalCredits</h4>
+                        <p class="text-muted mb-0">Total Credits</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-info">
+                    <div class="card-body text-center">
+                        <i class="bi bi-check-circle text-info fs-1"></i>
+                        <h4 class="mt-3 mb-1 text-info">@Model.Count(g => g.GradeStatus == "Passed")</h4>
+                        <p class="text-muted mb-0">Passed Courses</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-warning">
+                    <div class="card-body text-center">
+                        <i class="bi bi-journal-text text-warning fs-1"></i>
+                        <h4 class="mt-3 mb-1 text-warning">@Model.Count()</h4>
+                        <p class="text-muted mb-0">Total Courses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Distribution -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Phân bổ điểm</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    @{
+                        var gradeA = Model.Count(g => !string.IsNullOrEmpty(g.LetterGrade) && (g.LetterGrade == "A" ||
+                        g.LetterGrade == "A+"));
+                        var gradeB = Model.Count(g => !string.IsNullOrEmpty(g.LetterGrade) && (g.LetterGrade.StartsWith("B")));
+                        var gradeC = Model.Count(g => !string.IsNullOrEmpty(g.LetterGrade) && (g.LetterGrade.StartsWith("C")));
+                        var gradeD = Model.Count(g => !string.IsNullOrEmpty(g.LetterGrade) && (g.LetterGrade.StartsWith("D")));
+                        var gradeF = Model.Count(g => !string.IsNullOrEmpty(g.LetterGrade) && g.LetterGrade == "F");
+                    }
+                    <div class="col">
+                        <div class="fs-1 text-success">@gradeA</div>
+                        <div class="text-muted">Grade A</div>
+                    </div>
+                    <div class="col">
+                        <div class="fs-1 text-primary">@gradeB</div>
+                        <div class="text-muted">Grade B</div>
+                    </div>
+                    <div class="col">
+                        <div class="fs-1 text-info">@gradeC</div>
+                        <div class="text-muted">Grade C</div>
+                    </div>
+                    <div class="col">
+                        <div class="fs-1 text-warning">@gradeD</div>
+                        <div class="text-muted">Grade D</div>
+                    </div>
+                    <div class="col">
+                        <div class="fs-1 text-danger">@gradeF</div>
+                        <div class="text-muted">Grade F</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                <h4 class="mt-3 text-muted">No grades found</h4>
+                <p class="text-muted">You have no grades or no grades found matching the filter.</p>
+                <a asp-action="Grades" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Clear filter
+                </a>
+            </div>
+        </div>
+    }
+
+    <!-- External Grades (Adapter Pattern) -->
+    <h4 class="mt-4 mb-3"><i class="bi bi-clock-history me-2"></i>Linked grades (Old system)</h4>
+    @{
+        var externalGrades = ViewBag.ExternalGrades as List<SIMS.Patterns.Adapter.ExternalGrade>;
+    }
+    @if (externalGrades != null && externalGrades.Any())
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-warning">
+                            <tr>
+                                <th>Course code</th>
+                                <th>Course name</th>
+                                <th class="text-center">Grade</th>
+                                <th class="text-center">Semester</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var exGrade in externalGrades)
+                            {
+                                <tr>
+                                    <td>@exGrade.SubjectCode</td>
+                                    <td>@exGrade.SubjectName</td>
+                                    <td class="text-center fw-bold text-primary">@exGrade.Score</td>
+                                    <td class="text-center">@exGrade.Semester</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <small class="text-muted fst-italic">* Data synchronized from the old system through
+                    Adapter.</small>
+            </div>
+        </div>
+    }
+</div>
