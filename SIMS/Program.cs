@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SIMS.Data;
+using SIMS.Patterns.Adapter;
+using SIMS.Patterns.Factory;
+using SIMS.Patterns.Facade;
 
 namespace SIMS
 {

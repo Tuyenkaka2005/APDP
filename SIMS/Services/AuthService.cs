@@ -1,6 +1,7 @@
 using SIMS.Data;
 using SIMS.Helpers;
 using Microsoft.EntityFrameworkCore;
+using SIMS.Models.Entities;
 
 namespace SIMS.Services
 {
